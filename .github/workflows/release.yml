@@ -1,0 +1,58 @@
+name: Release Pipeline with Slack Approval
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  generate-release-notes:
+    runs-on: ubuntu-latest
+    outputs:
+      release-notes: ${{ steps.generate.outputs.notes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Generate release notes
+        id: generate
+        run: |
+          node scripts/generate_rc_markdown.js
+          
+  request-approval:
+    needs: generate-release-notes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Slack for approval
+        run: |
+          node scripts/post_release_notes.js
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          RELEASE_NOTES: ${{ needs.generate-release-notes.outputs.release-notes }}
+          
+      - name: Wait for approval
+        run: |
+          # Placeholder for approval logic
+          echo "Waiting for Slack approval..."
+          
+  deploy:
+    needs: request-approval
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Deploy release
+        run: |
+          echo "Deploying release..."
+          # Add actual deployment steps here
