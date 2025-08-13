@@ -1,0 +1,70 @@
+{
+  "display_information": {
+    "name": "Release Console PoC",
+    "description": "Slack chat approval system for release pipelines",
+    "background_color": "#2c2d30",
+    "long_description": "This Slack app enables team-based approval workflows for software releases through interactive chat commands and buttons."
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "Release Console",
+      "always_online": true
+    },
+    "slash_commands": [
+      {
+        "command": "/release-status",
+        "url": "https://your-app.com/slack/commands/status",
+        "description": "Check the status of pending releases",
+        "usage_hint": "[version]",
+        "should_escape": false
+      },
+      {
+        "command": "/release-approve",
+        "url": "https://your-app.com/slack/commands/approve",
+        "description": "Approve a release for deployment",
+        "usage_hint": "[version] [reason]",
+        "should_escape": false
+      },
+      {
+        "command": "/release-reject",
+        "url": "https://your-app.com/slack/commands/reject",
+        "description": "Reject a release request",
+        "usage_hint": "[version] [reason]",
+        "should_escape": false
+      }
+    ],
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://your-app.com/slack/interactivity",
+      "message_menu_options_url": "https://your-app.com/slack/options"
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "channels:read",
+        "chat:write",
+        "commands",
+        "users:read",
+        "users:read.email",
+        "im:write",
+        "mpim:write"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://your-app.com/slack/events",
+      "bot_events": [
+        "app_mention",
+        "message.channels",
+        "message.groups",
+        "message.im",
+        "message.mpim"
+      ]
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}
